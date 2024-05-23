@@ -77,25 +77,59 @@ while i < 2:
 
 # Karakterin ızgara üzerinde hareket ettirilmesi
 
+duvaraCarptiMi = "NOPE"
+
 def karakterHareketi(key):
     global karakterX
     global karakterY
+    global duvaraCarptiMi
+    global offsetX
+    global offsetY
     
+    adim_snd.play()
     if key == pygame.K_UP and karakterY != 0:
         karakterY -= 1 # 1 indisi ile y ekseni nitelenir!
-        
+        adim_snd.play() 
     elif key == pygame.K_DOWN and karakterY != 3:
         karakterY += 1
-        
+        adim_snd.play()
     elif key == pygame.K_LEFT and karakterX != 0:
         karakterX -= 1 # 0 indisi ile x ekseni nitelenir!
-        
+        adim_snd.play()
     elif key == pygame.K_RIGHT and karakterX != 3:
         karakterX += 1
+        adim_snd.play()
+    else:
+        # animasyon
+        duvaraCarpma_snd.play()
+        if key == pygame.K_UP and karakterY == 0:
+            offsetX = 3.75
+            offsetY = 1.25
+            duvaraCarptiMi = "UP"
+        elif key == pygame.K_DOWN and karakterY == 3:
+            offsetX = 3.75
+            offsetY = 6.5
+            duvaraCarptiMi = "DOWN"
+               
+        elif key == pygame.K_RIGHT and karakterX == 3:
+            offsetX = 6.75
+            offsetY = 4
+            duvaraCarptiMi = "RIGHT"
+            
+        elif key == pygame.K_LEFT and karakterX == 0:
+            offsetX = 0.75
+            offsetY = 4
+            duvaraCarptiMi = "LEFT"
+            
+        
+offsetX = 3.75
+offsetY = 4
     
-
 # Board çizimi
 def draw_board(surface):
+    global duvaraCarptiMi
+    global offsetX
+    global offsetY
     
     for row in range(BOARD_SIZE):
         for col in range(BOARD_SIZE):
@@ -103,6 +137,7 @@ def draw_board(surface):
             pygame.draw.rect(surface, WHITE, rect)
             pygame.draw.rect(surface, BLACK, rect, 2)
     
+    #sabit görsellerin ızgaraya eklenmesi
     for (gorsel,(x_ekseni,y_ekseni)) in gorseller.items():
         if gorsel == altin_img:
             window_surface.blit(gorsel, ((x_ekseni * CELL_SIZE) + ((x_ekseni + 4) * PADDING), (y_ekseni * CELL_SIZE) + ((y_ekseni + 4) * PADDING)))
@@ -113,8 +148,14 @@ def draw_board(surface):
         elif gorsel == cukur2_img:
             window_surface.blit(gorsel, ((x_ekseni * CELL_SIZE) + ((x_ekseni + 1) * PADDING), (y_ekseni * CELL_SIZE) + ((y_ekseni + 1) * PADDING)))
     
-    #karakter her seferinde başlangıç noktasında bulunmamalı!
-    window_surface.blit(karakter_img, ((karakterX * CELL_SIZE) + ((karakterX + 4) * PADDING), (karakterY * CELL_SIZE) + ((karakterY + 4) * PADDING)))
+    # karakter hareketinin gösterilmesi
+    window_surface.blit(karakter_img, ((karakterX * CELL_SIZE) + ((karakterX + offsetX) * PADDING), (karakterY * CELL_SIZE) + ((karakterY + offsetY) * PADDING)))
+    pygame.display.update()
+    if duvaraCarptiMi != "NOPE":
+        pygame.time.wait(250)
+        offsetX = 3.75
+        offsetY = 4
+        duvaraCarptiMi = "NOPE"
 
 # Oyun durumu inceleme
 def oyun_Durumu():
@@ -127,7 +168,6 @@ def oyun_Durumu():
                 oyunDurumu = "Oyun kaybedildi!"
     return oyunDurumu
         
-
 # Pygame başlat
 pygame.init()
 
@@ -136,35 +176,51 @@ window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 window_surface.fill(BLACK)
 pygame.display.set_caption('Wumpus World')
 
+# Sesler
+kazanma_snd = pygame.mixer.Sound("sounds/kazanma.wav")
+#kazanma_snd.set_volume(0.5)
+kaybetme_snd = pygame.mixer.Sound("sounds/kaybetme.wav")
+#kaybetme_snd.set_volume(0.5)
+adim_snd = pygame.mixer.Sound("sounds/adim.flac")
+#adim_snd.set_volume(0.5)
+duvaraCarpma_snd = pygame.mixer.Sound("sounds/duvaraCarpma.mp3")
+
 # Sonuç ekranı
 test_font = pygame.font.Font("fonts/pixelType.ttf",100)
 
 # Ana döngü
 running = True
-oyunBitti = False
 clock = pygame.time.Clock()
+sesIcinBayrak = True
 while running:
+    
+    oyunDurumu = oyun_Durumu()
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.KEYDOWN and oyunBitti == False:
+        if event.type == pygame.KEYDOWN and oyunDurumu == "Devam Ediyor":
             if event.key in [pygame.K_UP,pygame.K_DOWN,pygame.K_RIGHT,pygame.K_LEFT]:
                 karakterHareketi(event.key)
-       
-    draw_board(window_surface)
     
-    oyunDurumu = oyun_Durumu()
+    draw_board(window_surface)
+        
     if oyunDurumu != "Devam Ediyor":
+        
         if oyunDurumu == "Oyun kazanıldı!":
             text_surface = test_font.render('AJAN BASARDI!', False, 'Green')
             window_surface.blit(text_surface,(50,235))
+            if sesIcinBayrak:
+                kazanma_snd.play()
+                sesIcinBayrak = False
         else:
             text_surface = test_font.render('AJAN BASARAMADI!', False, 'Red')
             window_surface.blit(text_surface,(0,235))
-        oyunBitti = True
+            if sesIcinBayrak:
+                kaybetme_snd.play()
+                sesIcinBayrak = False
     
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(60) # oyunun fps'ini niteler
 
 pygame.quit()
