@@ -332,4 +332,4 @@ while running:
         
     clock.tick(60) # oyunun fps'ini niteler
 
-pygame.quit() # animasyonu iyileştirebilirsin! # kara büyü(parametre = 0 olması) # vampir görünmüyor haritada
+pygame.quit()
