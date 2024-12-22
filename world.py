@@ -36,11 +36,11 @@ WINDOW_WIDTH = BOARD_SIZE * CELL_SIZE + (BOARD_SIZE + 1) * PADDING
 WINDOW_HEIGHT = BOARD_SIZE * CELL_SIZE + (BOARD_SIZE + 1) * PADDING
 
 # Görseller
-karakter_img = pygame.image.load("images/karakter.png")
-altin_img = pygame.image.load("images/altin.png")
-cukur_img = pygame.image.load("images/cukur.png")
-cukur2_img = pygame.image.load("images/cukur2.png")
-vampir_img = pygame.image.load("images/vampir.png")
+karakter_img = pygame.image.load("assets/images/karakter.png")
+altin_img = pygame.image.load("assets/images/altin.png")
+cukur_img = pygame.image.load("assets/images/cukur.png")
+cukur2_img = pygame.image.load("assets/images/cukur2.png")
+vampir_img = pygame.image.load("assets/images/vampir.png")
 
 gorseller = dict() # bütün öğelerin indisini tutar
 
@@ -349,16 +349,16 @@ window_surface.fill(BLACK)
 pygame.display.set_caption('Wumpus World')
 
 # Sesler
-kazanma_snd = pygame.mixer.Sound("sounds/kazanma.wav")
+kazanma_snd = pygame.mixer.Sound("assets/sounds/kazanma.wav")
 #kazanma_snd.set_volume(0.5)
-kaybetme_snd = pygame.mixer.Sound("sounds/kaybetme.wav")
+kaybetme_snd = pygame.mixer.Sound("assets/sounds/kaybetme.wav")
 #kaybetme_snd.set_volume(0.5)
-adim_snd = pygame.mixer.Sound("sounds/adim.flac")
+adim_snd = pygame.mixer.Sound("assets/sounds/adim.flac")
 #adim_snd.set_volume(0.5)
-duvaraCarpma_snd = pygame.mixer.Sound("sounds/duvaraCarpma.mp3")
+duvaraCarpma_snd = pygame.mixer.Sound("assets/sounds/duvaraCarpma.mp3")
 
 # Sonuç ekranı
-test_font = pygame.font.Font("fonts/pixelType.ttf",100)
+test_font = pygame.font.Font("assets/fonts/pixelType.ttf",100)
 
 # Ana döngü
 running = True
@@ -397,4 +397,4 @@ while running:
         
     clock.tick(60) # oyunun fps'ini niteler
 
-pygame.quit() # animasyonu iyileştirebilirsin! # kara büyü(parametre = 0 olması) # vampir görünmüyor haritada
+pygame.quit()
